@@ -56,10 +56,15 @@ class Player(Entity):
             self.head = self.heads[0]
 
     def move(self, key_list: List[str]) -> None:
+        self.up = "UP" in key_list
+        self.down = "DOWN" in key_list
+        self.left = "LEFT" in key_list
+        self.right = "RIGHT" in key_list
         self.direction = key_list[0]
+        self.update_vel()
         self.walk_frame = (self.walk_frame + 1) % 8
-        self.x += (("RIGHT" in key_list) - ("LEFT" in key_list)) * self.speed
-        self.y += (("DOWN" in key_list) - ("UP" in key_list)) * self.speed
+        self.x += int((("RIGHT" in key_list) - ("LEFT" in key_list)) * self.x_vel * self.speed)
+        self.y += int((("DOWN" in key_list) - ("UP" in key_list)) * self.y_vel * self.speed)
 
     def update(self) -> None:
         key_map = {
