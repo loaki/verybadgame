@@ -21,6 +21,7 @@ coverage = "^7.6.3"
 pytablewriter = "^1.2.0"
 isodate = "^0.7.2"
 pre-commit = "^4.0.1"
+pygame = "^2.6.1"
 
 [tool.black]
 line-length = 120
