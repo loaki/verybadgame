@@ -1,3 +1,5 @@
+from typing import List
+
 import pygame
 
 from project.entities.entity import Entity
@@ -27,15 +29,37 @@ class Player(Entity):
         self.body = self.feet[0][0]
         self.x = config.window.width // 2
         self.y = config.window.height // 2
+        self.x_vel = 0.0
+        self.y_vel = 0.0
+        self.up = False
+        self.down = False
+        self.left = False
+        self.right = False
         self.direction = "DOWN"
-        self.walk = 0
+        self.walk_frame = 0
         self.speed = 5
 
-    def move(self, key: str) -> None:
-        self.direction = key
-        self.walk = (self.walk + 1) % 8
-        self.x += ((key == "RIGHT") - (key == "LEFT")) * self.speed
-        self.y += ((key == "DOWN") - (key == "UP")) * self.speed
+    def update_vel(self) -> None:
+        if self.up:
+            self.y_vel = max(self.y_vel - 0.15, 0)
+        if self.down:
+            self.y_vel = min(self.y_vel + 0.15, 1)
+        if self.left:
+            self.x_vel = max(self.x_vel - 0.15, 0)
+        if self.right:
+            self.x_vel = min(self.x_vel + 0.15, 1)
+        if (not self.left) and (not self.right) or (self.left and self.right):
+            self.x_vel *= 0.85
+        if (not self.up) and (not self.down) or (self.up and self.down):
+            self.y_vel *= 0.85
+        if self.x_vel == 0 and self.y_vel == 0:
+            self.head = self.heads[0]
+
+    def move(self, key_list: List[str]) -> None:
+        self.direction = key_list[0]
+        self.walk_frame = (self.walk_frame + 1) % 8
+        self.x += (("RIGHT" in key_list) - ("LEFT" in key_list)) * self.speed
+        self.y += (("DOWN" in key_list) - ("UP" in key_list)) * self.speed
 
     def update(self) -> None:
         key_map = {
@@ -45,7 +69,7 @@ class Player(Entity):
             "LEFT": 3,
         }
         self.head = self.heads[key_map[self.direction]]
-        self.body = self.feet[key_map[self.direction]][self.walk]
+        self.body = self.feet[key_map[self.direction]][self.walk_frame]
 
     def draw(self) -> None:
         self.update()

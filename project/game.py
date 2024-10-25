@@ -1,5 +1,6 @@
 import asyncio
 import sys
+from typing import List
 
 import pygame
 from pygame.locals import (
@@ -33,7 +34,7 @@ class Game:
         self.config = GameConfig(
             screen=screen,
             clock=pygame.time.Clock(),
-            fps=30,
+            fps=60,
             window=window,
             images=images,
             sounds=sounds,
@@ -51,17 +52,18 @@ class Game:
         screen_tap = event.type == pygame.FINGERDOWN
         return m_left or space_or_up or screen_tap
 
-    def player_move_event(self, event: pygame.event.Event) -> str | None:
+    def player_move_event(self, event: pygame.event.Event) -> List[str]:
         keys = pygame.key.get_pressed()
+        key_list = []
         if keys[self.config.controls.left]:
-            return "LEFT"
+            key_list.append("LEFT")
         elif keys[self.config.controls.right]:
-            return "RIGHT"
+            key_list.append("RIGHT")
         elif keys[self.config.controls.up]:
-            return "UP"
+            key_list.append("UP")
         elif keys[self.config.controls.down]:
-            return "DOWN"
-        return None
+            key_list.append("DOWN")
+        return key_list
 
     async def start(self) -> None:
         while True:
