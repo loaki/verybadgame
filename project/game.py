@@ -9,9 +9,11 @@ from pygame.locals import (
 )
 
 from project.entities.floor import Floor
-from project.entities.hud import Score
 from project.entities.player import Player
+from project.interfaces.score import Score
+from project.utils.common import Common
 from project.utils.controls import Controls
+from project.utils.debug import Debug
 from project.utils.game_config import GameConfig
 from project.utils.images import Images
 from project.utils.sounds import Sounds
@@ -45,9 +47,12 @@ class Game:
 
     async def start(self) -> None:
         while True:
+            self.common = Common(self.config)
+            self.debug = Debug(self.config)
+
             self.floor = Floor(self.config)
-            self.player = Player(self.config)
-            self.hud = Score(self.config)
+            self.player = Player(self.config, self.common)
+            self.hud = Score(self.config, self.common)
             await self.splash()
 
     async def splash(self) -> None:
@@ -59,6 +64,10 @@ class Game:
             self.player.tick()
             self.hud.tick()
 
+            if self.config.debug:
+                self.debug.draw()
+
+            self.common.update()
             pygame.display.update()
             await asyncio.sleep(0)
             self.config.tick()

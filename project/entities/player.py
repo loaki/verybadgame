@@ -1,12 +1,14 @@
 import pygame
 
 from project.entities.entity import Entity
+from project.utils.common import Common
 from project.utils.game_config import GameConfig
 
 
 class Player(Entity):
-    def __init__(self, config: GameConfig) -> None:
+    def __init__(self, config: GameConfig, common: Common) -> None:
         super().__init__(config=config)
+        self.common = common
         self.heads = [config.images.player.subsurface(pygame.Rect((i * 64) * 2, 0, 64, 64)) for i in range(3)]
         self.heads.append(pygame.transform.flip(self.heads[1], True, False))
         self.tearHeads = [config.images.player.subsurface(pygame.Rect(64 + (i * 64) * 2, 0, 64, 64)) for i in range(3)]
@@ -25,8 +27,9 @@ class Player(Entity):
         self.specialFrames = [config.images.player.subsurface(i * 128, 272 + 128, 128, 128) for i in range(1, 3)]
         self.head = self.heads[0]
         self.body = self.feet[0][0]
-        self.x = config.window.width // 2
-        self.y = config.window.height // 2
+        self.pos_x = float(config.window.width / 2)
+        self.pos_y = float(config.window.height / 2)
+        self.vel = 0.4
         self.x_vel = 0.0
         self.y_vel = 0.0
         self.up = False
@@ -34,11 +37,11 @@ class Player(Entity):
         self.left = False
         self.right = False
         self.direction = "DOWN"
-        self.walk_frame = 0
-        self.speed = 5
+        self.walk_frame = 0.0
+        self.speed = 300.0
 
     def update_vel(self) -> None:
-        vel = 0.1
+        vel = self.vel * 30 / (self.common.current_fps or 30)
         if sum([self.up, self.down, self.left, self.right]) > 1:
             vel = vel / 1.41421356237
         if self.up:
@@ -56,17 +59,17 @@ class Player(Entity):
         if self.x_vel < vel and self.x_vel > -vel and self.y_vel < vel and self.y_vel > -vel:
             self.x_vel = 0
             self.y_vel = 0
-            self.walk_frame = 0
+            self.walk_frame = 0.0
             self.direction = "DOWN"
         else:
-            self.walk_frame = (self.walk_frame + 1) % 8
+            self.walk_frame = (self.walk_frame + 30 / (self.common.current_fps or 30)) % 8
 
     def move(self) -> None:
-        keys = pygame.key.get_pressed()
-        self.up = keys[self.config.controls.up]
-        self.down = keys[self.config.controls.down]
-        self.left = keys[self.config.controls.left]
-        self.right = keys[self.config.controls.right]
+        if self.common.key_pressed:
+            self.up = bool(self.common.key_pressed[self.config.controls.up])
+            self.down = bool(self.common.key_pressed[self.config.controls.down])
+            self.left = bool(self.common.key_pressed[self.config.controls.left])
+            self.right = bool(self.common.key_pressed[self.config.controls.right])
         self.direction = (
             "DOWN"
             if self.down
@@ -82,12 +85,12 @@ class Player(Entity):
             "LEFT": 3,
         }
         self.update_vel()
-        self.x += int(self.x_vel * self.speed)
-        self.y += int(self.y_vel * self.speed)
+        self.pos_x += self.x_vel * self.speed / (self.common.current_fps or 30)
+        self.pos_y += self.y_vel * self.speed / (self.common.current_fps or 30)
         self.head = self.heads[key_map[self.direction]]
-        self.body = self.feet[key_map[self.direction]][self.walk_frame]
+        self.body = self.feet[key_map[self.direction]][int(self.walk_frame)]
 
     def draw(self) -> None:
         self.update()
-        self.config.screen.blit(self.body, (self.x - 32, self.y - 32))
-        self.config.screen.blit(self.head, (self.x - 32, self.y - 32 - 20))
+        self.config.screen.blit(self.body, (int(self.pos_x - 32), int(self.pos_y - 32)))
+        self.config.screen.blit(self.head, (int(self.pos_x - 32), int(self.pos_y - 32 - 20)))
