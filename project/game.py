@@ -1,12 +1,9 @@
 import asyncio
 import sys
-from typing import List
 
 import pygame
 from pygame.locals import (
     K_ESCAPE,
-    K_SPACE,
-    K_UP,
     KEYDOWN,
     QUIT,
 )
@@ -46,25 +43,6 @@ class Game:
             pygame.quit()
             sys.exit()
 
-    def is_tap_event(self, event: pygame.event.Event) -> bool:
-        m_left, _, _ = pygame.mouse.get_pressed()
-        space_or_up = event.type == KEYDOWN and (event.key in [K_SPACE, K_UP])
-        screen_tap = event.type == pygame.FINGERDOWN
-        return m_left or space_or_up or screen_tap
-
-    def player_move_event(self, event: pygame.event.Event) -> List[str]:
-        keys = pygame.key.get_pressed()
-        key_list = []
-        if keys[self.config.controls.left]:
-            key_list.append("LEFT")
-        elif keys[self.config.controls.right]:
-            key_list.append("RIGHT")
-        elif keys[self.config.controls.up]:
-            key_list.append("UP")
-        elif keys[self.config.controls.down]:
-            key_list.append("DOWN")
-        return key_list
-
     async def start(self) -> None:
         while True:
             self.floor = Floor(self.config)
@@ -76,10 +54,6 @@ class Game:
         while True:
             for event in pygame.event.get():
                 self.check_quit_event(event)
-                if self.is_tap_event(event):
-                    return
-                if key := self.player_move_event(event):
-                    self.player.move(key)
 
             self.floor.tick()
             self.player.tick()

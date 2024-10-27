@@ -15,9 +15,4 @@ class Sounds:
             ext = "wav"
         else:
             ext = "ogg"
-
-        self.die = pygame.mixer.Sound(f"project/assets/audio/die.{ext}")
-        self.hit = pygame.mixer.Sound(f"project/assets/audio/hit.{ext}")
         self.point = pygame.mixer.Sound(f"project/assets/audio/point.{ext}")
-        self.swoosh = pygame.mixer.Sound(f"project/assets/audio/swoosh.{ext}")
-        self.wing = pygame.mixer.Sound(f"project/assets/audio/wing.{ext}")
