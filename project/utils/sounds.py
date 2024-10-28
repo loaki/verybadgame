@@ -2,6 +2,8 @@ import sys
 
 import pygame
 
+from project.utils.utils import resource_path
+
 
 class Sounds:
     die: pygame.mixer.Sound
@@ -15,4 +17,4 @@ class Sounds:
             ext = "wav"
         else:
             ext = "ogg"
-        self.point = pygame.mixer.Sound(f"project/assets/audio/point.{ext}")
+        self.point = pygame.mixer.Sound(resource_path(f"project/assets/audio/point.{ext}"))
