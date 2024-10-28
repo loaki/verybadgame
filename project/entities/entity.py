@@ -50,8 +50,8 @@ class Entity:
             return self.rect.colliderect(other.rect)
         return pixel_collision(self.rect, other.rect, self.hit_mask, other.hit_mask)
 
-    def tick(self, surface: pygame.Surface) -> None:
-        self.draw(surface)
+    def tick(self) -> None:
+        self.draw()
         rect = self.rect
         if self.config.debug:
             pygame.draw.rect(self.config.screen, (255, 0, 0), rect, 1)
@@ -70,6 +70,6 @@ class Entity:
                 ),
             )
 
-    def draw(self, surface: pygame.Surface) -> None:
+    def draw(self) -> None:
         if self.image:
-            surface.blit(self.image, self.rect)
+            self.config.screen.blit(self.image, self.rect)

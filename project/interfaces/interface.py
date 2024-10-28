@@ -39,9 +39,9 @@ class Interface:
     def rect(self) -> pygame.Rect:
         return pygame.Rect(self.x, self.y, self.w, self.h)
 
-    def tick(self, surface: pygame.Surface) -> None:
-        self.draw(surface)
+    def tick(self) -> None:
+        self.draw()
 
-    def draw(self, surface: pygame.Surface) -> None:
+    def draw(self) -> None:
         if self.image:
-            surface.blit(self.image, self.rect)
+            self.config.screen.blit(self.image, self.rect)
