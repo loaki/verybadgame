@@ -73,3 +73,6 @@ coverage: ## run tests locally with coverage
 down: ## down docker tests stack
 	@echo >&2 Stopping docker tests stack...
 	${COMPOSE_COMMAND} down -v
+
+.PHONY: checks
+checks: format-check lint typing
