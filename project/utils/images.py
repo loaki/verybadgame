@@ -2,6 +2,8 @@ from typing import List
 
 import pygame
 
+from project.utils.utils import resource_path
+
 
 class Images:
     alpha_num: List[pygame.Surface]
@@ -9,13 +11,13 @@ class Images:
 
     def __init__(self) -> None:
         self.alpha_num = self._load_font(
-            path="project/assets/fonts/alpha_num.png", width=20, height=16, total=36, size=1.8
+            path=resource_path("project/assets/fonts/alpha_num.png"), width=20, height=16, total=36, size=1.8
         )
         self.pixel_num = self._load_font(
-            path="project/assets/fonts/pixel_num.png", width=10, height=12, total=10, size=2
+            path=resource_path("project/assets/fonts/pixel_num.png"), width=10, height=12, total=10, size=2
         )
-        self.floor = self._load_texture(path="project/assets/floors/floor_1.png", size=1)
-        self.player = self._load_texture(path="project/assets/characters/isaac.png", size=2)
+        self.floor = self._load_texture(path=resource_path("project/assets/floors/floor_1.png"), size=1)
+        self.player = self._load_texture(path=resource_path("project/assets/characters/isaac.png"), size=2)
 
     def _load_font(self, path: str, width: int, height: int, total: int, size: float) -> List[pygame.Surface]:
         surface = pygame.image.load(path)
