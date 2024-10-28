@@ -1,5 +1,3 @@
-import pygame
-
 from project.entities.entity import Entity
 from project.utils.game_config import GameConfig
 
@@ -10,5 +8,5 @@ class Floor(Entity):
             config=config, image=config.images.floor, x=0, y=0, w=config.window.width, h=config.window.height
         )
 
-    def draw(self, surface: pygame.Surface) -> None:
-        super().draw(surface)
+    def draw(self) -> None:
+        super().draw()

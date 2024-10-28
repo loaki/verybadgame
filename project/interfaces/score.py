@@ -28,7 +28,7 @@ class Score(Interface):
         h = max(image.get_height() for image in images)
         return pygame.Rect(x, self.y, w, h)
 
-    def draw(self, surface: pygame.Surface) -> None:
+    def draw(self) -> None:
         if self.common.key_pressed and self.common.key_pressed[self.config.controls.space]:
             self.add()
         score_digits = [int(x) for x in list(str(self.score))]
@@ -37,5 +37,5 @@ class Score(Interface):
         x_offset = (self.config.window.width - digits_width) / 2
 
         for image in images:
-            surface.blit(image, (x_offset, self.y))
+            self.config.screen.blit(image, (x_offset, self.y))
             x_offset += image.get_width()

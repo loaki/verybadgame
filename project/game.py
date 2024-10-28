@@ -41,7 +41,6 @@ class Game:
             sounds=sounds,
             controls=controls,
         )
-        self.combined_surface = pygame.Surface((self.config.window.width, self.config.window.height), pygame.SRCALPHA)
         if self.config.workers > 0:
             self.executor = ThreadPoolExecutor(max_workers=self.config.workers)
 
@@ -54,13 +53,13 @@ class Game:
         for entity in entities:
             entity.update()
 
-    def draw_entities(self, entities: List[Player], surface: pygame.Surface) -> None:
+    def draw_entities(self, entities: List[Player]) -> None:
         for entity in entities:
-            entity.draw(surface)
+            entity.draw()
 
-    def tick_entities(self, entities: List[Player], surface: pygame.Surface) -> None:
+    def tick_entities(self, entities: List[Player]) -> None:
         for entity in entities:
-            entity.tick(surface)
+            entity.tick()
 
     async def start(self) -> None:
         while True:
@@ -83,7 +82,7 @@ class Game:
             for event in pygame.event.get():
                 self.check_quit_event(event)
 
-            self.floor.tick(self.combined_surface)
+            self.floor.tick()
 
             if self.config.workers > 0:
                 tasks = [
@@ -101,15 +100,13 @@ class Game:
                     for worker in range(self.config.workers)
                 ]
                 await asyncio.gather(*tasks)
-                self.draw_entities(self.entities, self.combined_surface)
+                self.draw_entities(self.entities)
             else:
-                self.tick_entities(self.entities, self.combined_surface)
+                self.tick_entities(self.entities)
 
-            self.hud.tick(self.combined_surface)
+            self.hud.tick()
             if self.config.debug:
-                self.debug.tick(self.combined_surface)
-
-            self.config.screen.blit(self.combined_surface, (0, 0))
+                self.debug.tick()
 
             self.common.update()
             pygame.display.update()
