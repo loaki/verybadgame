@@ -26,7 +26,7 @@ class Game:
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Very Bad Game")
-        window = Window(960, 540)
+        window = Window(1920, 1080)
         screen = pygame.display.set_mode((window.width, window.height))
         images = Images()
         sounds = Sounds()
@@ -43,16 +43,20 @@ class Game:
         )
         self.combined_surface = pygame.Surface((self.config.window.width, self.config.window.height), pygame.SRCALPHA)
         if self.config.workers > 0:
-            self.entities_surface = [
-                pygame.Surface((self.config.window.width, self.config.window.height), pygame.SRCALPHA)
-                for _ in range(self.config.workers)
-            ]
             self.executor = ThreadPoolExecutor(max_workers=self.config.workers)
 
     def check_quit_event(self, event: pygame.event.Event) -> None:
         if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
             pygame.quit()
             sys.exit()
+
+    def update_entities(self, entities: List[Player]) -> None:
+        for entity in entities:
+            entity.update()
+
+    def draw_entities(self, entities: List[Player], surface: pygame.Surface) -> None:
+        for entity in entities:
+            entity.draw(surface)
 
     def tick_entities(self, entities: List[Player], surface: pygame.Surface) -> None:
         for entity in entities:
@@ -66,7 +70,7 @@ class Game:
             self.floor = Floor(self.config)
             # self.player = Player(self.config, self.common)
             self.players = [
-                Player(self.config, self.common, x * 64, y * 64) for x in range(0, 20) for y in range(0, 20)
+                Player(self.config, self.common, x * 64, y * 64) for x in range(0, 50) for y in range(-50, 50)
             ]
             self.hud = Score(self.config, self.common)
             self.entities = []
@@ -82,12 +86,10 @@ class Game:
             self.floor.tick(self.combined_surface)
 
             if self.config.workers > 0:
-                for surface in self.entities_surface:
-                    surface.fill((0, 0, 0, 0))
                 tasks = [
                     asyncio.get_running_loop().run_in_executor(
                         self.executor,
-                        self.tick_entities,
+                        self.update_entities,
                         self.entities[
                             worker
                             * len(self.entities)
@@ -95,13 +97,11 @@ class Game:
                             * len(self.entities)
                             // self.config.workers
                         ],
-                        self.entities_surface[worker],
                     )
                     for worker in range(self.config.workers)
                 ]
                 await asyncio.gather(*tasks)
-                for surface in self.entities_surface:
-                    self.combined_surface.blit(surface, (0, 0))
+                self.draw_entities(self.entities, self.combined_surface)
             else:
                 self.tick_entities(self.entities, self.combined_surface)
 

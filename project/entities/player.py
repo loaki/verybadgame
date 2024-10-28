@@ -93,6 +93,15 @@ class Player(Entity):
         self.body = self.feet[key_map[self.direction]][int(self.walk_frame)]
 
     def draw(self, surface: pygame.Surface) -> None:
+        if (
+            int(self.pos_x + 32) > 0
+            and int(self.pos_x - 32) < self.config.window.width
+            and int(self.pos_y + 32 - 20) > 0
+            and int(self.pos_y - 32) < self.config.window.height
+        ):
+            surface.blit(self.body, (int(self.pos_x - 32), int(self.pos_y - 32)))
+            surface.blit(self.head, (int(self.pos_x - 32), int(self.pos_y - 32 - 20)))
+
+    def tick(self, surface: pygame.Surface) -> None:
         self.update()
-        surface.blit(self.body, (int(self.pos_x - 32), int(self.pos_y - 32)))
-        surface.blit(self.head, (int(self.pos_x - 32), int(self.pos_y - 32 - 20)))
+        return super().tick(surface)
