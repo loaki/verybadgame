@@ -26,7 +26,7 @@ class Game:
     def __init__(self) -> None:
         pygame.init()
         pygame.display.set_caption("Very Bad Game")
-        window = Window(1920, 1080)
+        window = Window(960, 540)
         screen = pygame.display.set_mode((window.width, window.height))
         images = Images()
         sounds = Sounds()
@@ -81,6 +81,7 @@ class Game:
         while True:
             for event in pygame.event.get():
                 self.check_quit_event(event)
+            self.common.update()
 
             self.floor.tick()
 
@@ -108,7 +109,6 @@ class Game:
             if self.config.debug:
                 self.debug.tick()
 
-            self.common.update()
             pygame.display.update()
             await asyncio.sleep(0)
             self.config.tick()

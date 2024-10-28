@@ -104,4 +104,4 @@ class Player(Entity):
 
     def tick(self) -> None:
         self.update()
-        return super().tick()
+        self.draw()
