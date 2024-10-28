@@ -6,7 +6,7 @@ from project.utils.game_config import GameConfig
 
 
 class Player(Entity):
-    def __init__(self, config: GameConfig, common: Common) -> None:
+    def __init__(self, config: GameConfig, common: Common, x: float, y: float) -> None:
         super().__init__(config=config)
         self.common = common
         self.heads = [config.images.player.subsurface(pygame.Rect((i * 64) * 2, 0, 64, 64)) for i in range(3)]
@@ -27,8 +27,10 @@ class Player(Entity):
         self.specialFrames = [config.images.player.subsurface(i * 128, 272 + 128, 128, 128) for i in range(1, 3)]
         self.head = self.heads[0]
         self.body = self.feet[0][0]
-        self.pos_x = float(config.window.width / 2)
-        self.pos_y = float(config.window.height / 2)
+        self.pos_x = x
+        self.pos_y = y
+        # self.pos_x = float(config.window.width / 2)
+        # self.pos_y = float(config.window.height / 2)
         self.vel = 0.4
         self.x_vel = 0.0
         self.y_vel = 0.0
@@ -90,7 +92,7 @@ class Player(Entity):
         self.head = self.heads[key_map[self.direction]]
         self.body = self.feet[key_map[self.direction]][int(self.walk_frame)]
 
-    def draw(self) -> None:
+    def draw(self, surface: pygame.Surface) -> None:
         self.update()
-        self.config.screen.blit(self.body, (int(self.pos_x - 32), int(self.pos_y - 32)))
-        self.config.screen.blit(self.head, (int(self.pos_x - 32), int(self.pos_y - 32 - 20)))
+        surface.blit(self.body, (int(self.pos_x - 32), int(self.pos_y - 32)))
+        surface.blit(self.head, (int(self.pos_x - 32), int(self.pos_y - 32 - 20)))

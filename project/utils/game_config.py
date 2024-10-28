@@ -28,6 +28,7 @@ class GameConfig:
         self.controls = controls
         self.curr_fps = 0.0
         self.debug = os.environ.get("DEBUG", False)
+        self.workers = int(os.environ.get("WORKERS", 0))
 
     def tick(self) -> None:
         self.curr_fps = self.clock.get_fps()
